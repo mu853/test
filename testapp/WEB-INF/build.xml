@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="myhello" default="compile" basedir=".">
+    <property name="build.src" value="src"/>
+    <property name="build.dest" value="classes"/>
+    <property name="project" value="myhello"/>
+
+    <path id="myclasspath">
+        <pathelement path="/usr/share/tomcat/lib/tomcat-servlet-3.0-api.jar"/>
+        <pathelement path="/usr/share/tomcat/lib/log4j.jar"/>
+    </path>
+
+    <target name="compile">
+        <mkdir dir="${build.dest}"/>
+        <javac srcdir="${build.src}"
+               classpathref="myclasspath"
+               debug="${debug}"
+               destdir="${build.dest}">
+            <!-- <compilerarg value="-Xlint:unchecked"/> -->
+        </javac>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dest}"/>
+    </target>
+</project>
+
