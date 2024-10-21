@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hoge
+  name: hoge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hoge
+  template:
+    metadata:
+      labels:
+        app: hoge
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - mountPath: /mnt
+          name: pvc-smb
+      volumes:
+      - name: pvc-smb
+        persistentVolumeClaim:
+          claimName: pvc-smb
