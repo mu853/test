@@ -1,0 +1,14 @@
+#!/bin/sh
+set -x
+
+mkdir -p ca/{root,intermediate}/{private,certs,csr}
+cd ca
+
+# root
+openssl genrsa -out root/private/ca.key 4096
+openssl req -x509 -new -nodes -key root/private/ca.key -sha256 -days 1825 -out root/certs/ca.crt
+
+# intermediate
+openssl genrsa -out intermediate/private/intermediate.key 4096
+openssl req -new -key intermediate/private/intermediate.key -out intermediate/csr/intermediate.csr
+openssl x509 -req -in intermediate/csr/intermediate.csr -CA root/certs/ca.crt -CAkey root/private/ca.key -CAcreateserial -out intermediate/certs/intermediate.crt -days 1095 -sha256 -extfile <(echo -e "basicConstraints=critical,CA:true,pathlen:0\nkeyUsage=critical,digitalSignature,cRLSign,keyCertSign")

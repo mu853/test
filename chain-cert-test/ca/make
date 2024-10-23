@@ -1,0 +1,17 @@
+#!/bin/sh
+set -x
+
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -out server.csr -config san.cnf
+openssl x509 -req -in server.csr -CA intermediate/certs/intermediate.crt -CAkey intermediate/private/intermediate.key -CAcreateserial -out server.crt -days 365 -sha256 -extfile san.txt
+openssl x509 -req -in server.csr -CA root/certs/ca.crt -CAkey root/private/ca.key -CAcreateserial -out server2.crt -days 365 -sha256 -extfile san.txt
+
+cat intermediate/certs/intermediate.crt root/certs/ca.crt > ca-chain.pem
+cat server.crt intermediate/certs/intermediate.crt root/certs/ca.crt > all-chain.pem
+cat server2.crt intermediate/certs/intermediate.crt root/certs/ca.crt > all-chain2.pem
+cat root/certs/ca.crt intermediate/certs/intermediate.crt server.crt > all-chain-reverse.pem
+cat root/certs/ca.crt intermediate/certs/intermediate.crt server2.crt > all-chain-reverse2.pem
+
+openssl verify -CAfile root/certs/ca.crt intermediate/certs/intermediate.crt
+openssl verify -CAfile ca-chain.pem server.crt
+openssl verify -CAfile root/certs/ca.crt server2.crt
